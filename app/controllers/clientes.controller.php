@@ -13,44 +13,42 @@ public function __construct (){
 }
 
 //METODOS 
-    //A Y B
-    public function GetAllClientes($req, $res) {
-        $apellido = null;
-        // Verificar si se desea filtrar por apellido
-        if (isset($req->query->apellido)) {
-            $apellido = $req->query->apellido;
-        }
-
-        $nombre = null;
-        // Verificar si se desea filtrar por apellido
-        if (isset($req->query->nombre)) {
-            $nombre = $req->query->nombre;
-        }
-
-        $email = null;
-        // Verificar si se desea filtrar por apellido
-        if (isset($req->query->email)) {
-            $email = $req->query->email;
-        }
-
-        $telefono = null;
-        // Verificar si se desea filtrar por apellido
-        if (isset($req->query->telefono)) {
-            $telefono = $req->query->telefono;
-        }
-        
-        $orderBy = false;
-        // Verificar si se desea ordenar por algún criterio
-        if (isset($req->query->asc)) {
-            $orderBy = $req->query->asc;
-        }
-    
-        // Obtener los clientes con filtros y orden
-        $clientes = $this->model->GetAllClientes($apellido,$nombre, $orderBy);
-        
-        // Enviar la respuesta con los datos obtenidos
-        return $this->view->response($clientes, 200);
+public function GetAllClientes($req, $res) {
+    $apellido = null;
+    if (isset($req->query->apellido)) {
+        $apellido = $req->query->apellido;
     }
+
+    $nombre = null;
+    if (isset($req->query->nombre)) {
+        $nombre = $req->query->nombre;
+    }
+
+    $email = null;
+    if (isset($req->query->email)) {
+        $email = $req->query->email;
+    }
+
+    $telefono = null;
+    if (isset($req->query->telefono)) {
+        $telefono = $req->query->telefono;
+    }
+
+    $orderBy = null;
+    // Verificar si se desea ordenar por algún criterio
+    if (isset($req->query->asc)) {
+        // Aquí puedes verificar si el valor es 'ASC' o 'DESC'
+        $orderBy = $req->query->asc == 'ASC' ? 'ASC' : 'DESC';
+    }
+
+    // Llamar a la función del modelo con los parámetros
+    $clientes = $this->model->GetAllClientes($apellido, $nombre, $email, $telefono, $orderBy);
+
+    // Retornar los resultados
+    return $this->view->response($clientes, 200);
+}
+
+
    //  A 
     public function updateClient($req, $res){
     $id = $req->params->id;

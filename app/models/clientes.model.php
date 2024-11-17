@@ -2,54 +2,54 @@
 require_once 'app/models/model.php';
 class ClientModel extends Model {
 
-  public function GetAllClientes($apellido = null, $nombre = null , $email = null , $telefono = null , $orderBy = false) {
+  public function GetAllClientes($apellido = null, $nombre = null, $email = null, $telefono = null, $orderByColumn = null, $orderBy = null) {
     $sql = 'SELECT * FROM clientes';
     $params = [];
+    $conditions = [];  // Almacenaremos todas las condiciones WHERE.
 
     // Filtrar por apellido si está especificado
     if ($apellido != null) {
-        $sql .= ' WHERE apellido LIKE ?';
+        $conditions[] = "apellido LIKE ?";
         $params[] = "%$apellido%";
     }
 
+    // Filtrar por nombre si está especificado
     if ($nombre != null) {
-      $sql .= ' WHERE nombre LIKE ?';
-      $params[] = "%$nombre%";
-  }
-      if ($email != null) {
-        $sql .= ' WHERE email LIKE ?';
-        $params[] = "%$email%";
-    }
-    if ($telefono != null) {
-      $sql .= ' WHERE telefono LIKE ?';
-      $params[] = "%$telefono%";
+        $conditions[] = "nombre LIKE ?";
+        $params[] = "%$nombre%";
     }
 
-    // Ordenar por columna si está especificado
-    if ($orderBy) {
-        switch ($orderBy) {
-            case 'nombre':
-                $sql .= ' ORDER BY nombre';
-                break;
-            case 'apellido':
-                $sql .= ' ORDER BY apellido';
-                break;
-            case 'email':
-                $sql .= ' ORDER BY email';
-                break;
-            case 'telefono':
-                $sql .= ' ORDER BY telefono';
-                break;
-            
-        }
+    // Filtrar por email si está especificado
+    if ($email != null) {
+        $conditions[] = "email LIKE ?";
+        $params[] = "%$email%";
     }
-    // Ejecutar consulta preparada
+
+    // Filtrar por teléfono si está especificado
+    if ($telefono != null) {
+        $conditions[] = "telefono LIKE ?";
+        $params[] = "%$telefono%";
+    }
+
+    // Si hay condiciones, agregarlas a la consulta con AND
+    if (count($conditions) > 0) {
+        $sql .= ' WHERE ' . implode(' AND ', $conditions);
+    }
+
+    // Ordenar si se especifica un criterio de orden
+    if ($orderByColumn && $orderBy) {
+        $sql .= ' ORDER BY ' . $orderByColumn . ' ' . $orderBy; // Aquí solo debes concatenar una vez 'ASC' o 'DESC'
+    }
+
+    // Ejecutar la consulta preparada
     $query = $this->db->prepare($sql);
     $query->execute($params);
 
     // Retornar los resultados como un arreglo de objetos
     return $query->fetchAll(PDO::FETCH_OBJ);
 }
+
+
 
 
 public function getClientesById($id){
