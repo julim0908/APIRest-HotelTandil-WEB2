@@ -9,4 +9,5 @@ $router->addRoute('clientes',      'GET',    'ClientController', 'GetAllClientes
 $router->addRoute('clientes/:id',  'GET',    'ClientController', 'GetClientesById');  
 $router->addRoute('clientes',      'POST',    'ClientController', 'CreateClient');
 $router->addRoute('clientes/:id',  'PUT',    'ClientController', 'updateClient');  
+
 $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);

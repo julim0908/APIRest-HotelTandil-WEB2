@@ -13,19 +13,45 @@ public function __construct (){
 }
 
 //METODOS 
-    //A
+    //A Y B
     public function GetAllClientes($req, $res) {
-        $apellido = $req->query->apellido ?? null; // Obtener apellido de la query string
-        $asc = $req->query->asc ?? false; // Obtener dirección de orden
-    
-        // Obtener clientes filtrados y ordenados
-        $clientes = $this->model->GetAllClientes($apellido, $asc);
-    
-        // Responder con los datos obtenidos
-        $this->view->response($clientes, 200);
-    }
-    
+        $apellido = null;
+        // Verificar si se desea filtrar por apellido
+        if (isset($req->query->apellido)) {
+            $apellido = $req->query->apellido;
+        }
 
+        $nombre = null;
+        // Verificar si se desea filtrar por apellido
+        if (isset($req->query->nombre)) {
+            $nombre = $req->query->nombre;
+        }
+
+        $email = null;
+        // Verificar si se desea filtrar por apellido
+        if (isset($req->query->email)) {
+            $email = $req->query->email;
+        }
+
+        $telefono = null;
+        // Verificar si se desea filtrar por apellido
+        if (isset($req->query->telefono)) {
+            $telefono = $req->query->telefono;
+        }
+        
+        $orderBy = false;
+        // Verificar si se desea ordenar por algún criterio
+        if (isset($req->query->asc)) {
+            $orderBy = $req->query->asc;
+        }
+    
+        // Obtener los clientes con filtros y orden
+        $clientes = $this->model->GetAllClientes($apellido,$nombre, $orderBy);
+        
+        // Enviar la respuesta con los datos obtenidos
+        return $this->view->response($clientes, 200);
+    }
+   //  A 
     public function updateClient($req, $res){
     $id = $req->params->id;
     
@@ -53,10 +79,7 @@ public function __construct (){
     }
 
 }
-
-
-
-    //B
+//B
     public function GetClientesById($req, $res){
         $id = $req->params->id;  
         $cliente = $this->model->getClientesById($id);  
@@ -64,8 +87,7 @@ public function __construct (){
             $this->view->response('No hay clientes registrados', 404);
         } 
             return $this->view->response($cliente, 200);
-    }
-
+}
 
 //B
     public function CreateClient($req, $res){
@@ -82,14 +104,10 @@ public function __construct (){
 
         if ($ClienteCreado) {
                 $cliente = $this->model->GetClientesById($ClienteCreado);
-                return $this->view->response($cliente, 201);
+                return $this->view->response($cliente , 201);
             } else {
                 return $this->view->response("Error al insertar el", 500);
             }
-    }
-
-   
-    
-}
-
+    }   
+  }
 ?>

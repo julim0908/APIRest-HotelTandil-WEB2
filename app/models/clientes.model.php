@@ -2,38 +2,55 @@
 require_once 'app/models/model.php';
 class ClientModel extends Model {
 
-  public function GetAllClientes($apellido = null, $asc = false) {
+  public function GetAllClientes($apellido = null, $nombre = null , $email = null , $telefono = null , $orderBy = false) {
     $sql = 'SELECT * FROM clientes';
     $params = [];
 
-    // Filtro por apellido
+    // Filtrar por apellido si está especificado
     if ($apellido != null) {
-        $sql .= ' WHERE apellido = ?';
-        $params[] = $apellido;
+        $sql .= ' WHERE apellido LIKE ?';
+        $params[] = "%$apellido%";
     }
 
-    // Ordenar por nombre de columna (validado) y dirección
-    if ($asc) {
-        $direction = strtolower($asc) === 'asc' ? 'ASC' : 'DESC'; // Validar asc/desc
-        $sql .= ' ORDER BY apellido ' . $direction;
+    if ($nombre != null) {
+      $sql .= ' WHERE nombre LIKE ?';
+      $params[] = "%$nombre%";
+  }
+      if ($email != null) {
+        $sql .= ' WHERE email LIKE ?';
+        $params[] = "%$email%";
+    }
+    if ($telefono != null) {
+      $sql .= ' WHERE telefono LIKE ?';
+      $params[] = "%$telefono%";
     }
 
-    // Preparar y ejecutar consulta
+    // Ordenar por columna si está especificado
+    if ($orderBy) {
+        switch ($orderBy) {
+            case 'nombre':
+                $sql .= ' ORDER BY nombre';
+                break;
+            case 'apellido':
+                $sql .= ' ORDER BY apellido';
+                break;
+            case 'email':
+                $sql .= ' ORDER BY email';
+                break;
+            case 'telefono':
+                $sql .= ' ORDER BY telefono';
+                break;
+            
+        }
+    }
+    // Ejecutar consulta preparada
     $query = $this->db->prepare($sql);
     $query->execute($params);
 
-    // Retornar los datos
+    // Retornar los resultados como un arreglo de objetos
     return $query->fetchAll(PDO::FETCH_OBJ);
+}
 
-      // 2. Ejecuto la consulta
-      $query = $this->db->prepare($sql);
-      $query->execute($apellido,$asc);
-  
-      // 3. Obtengo los datos en un arreglo de objetos
-      $clients = $query->fetchAll(PDO::FETCH_OBJ); 
-  
-      return $clients;
-  }
 
 public function getClientesById($id){
   $query = $this->db->prepare("SELECT * FROM clientes WHERE id_cliente = ?");
